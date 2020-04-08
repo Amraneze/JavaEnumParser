@@ -1,6 +1,6 @@
 package com.github.amraneze
 
-import com.github.amraneze.io.EnumIO.{readEnum, writeEnum}
+import com.github.amraneze.io.EnumIO.{readEnum, readEnums, writeEnum, writeEnums}
 
 object App extends App {
 	import com.github.amraneze.util.CommonUtil._
@@ -10,6 +10,8 @@ object App extends App {
 		System.exit(1)
 	}
 	val parsedArgs: ArgMap = parseArgs(Map.empty, args.toSeq)
-	val file: Option[String] = parsedArgs.get(Symbol("file")).asInstanceOf[Option[String]]
-	writeEnum(file, readEnum(file))
+	val file: String = parsedArgs.get(Symbol("file")).asInstanceOf[Option[String]]
+		.filter(!_.isEmpty).getOrElse(throw new RuntimeException("File can't be empty"))
+	val isDirectory: Boolean = !file.endsWith(".java")
+	if (isDirectory) writeEnums(readEnums(file)) else writeEnum(file, readEnum(file))
 }
